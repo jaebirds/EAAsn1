@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html>
+
+<!--
+ |
+ |	Created by Julia Cordeiro
+ |	March 2017
+ |
+-->
+
+	<head>
+		<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+		<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+		<style>
+			html, body {
+				height: 100%;
+				font-family: 'Montserrat', sans-serif;
+			}
+			
+			*::selection {background-color: black; color: white;}
+			*::-moz-selection {background-color: black; color: white;}
+			*::-webkit-selection {background-color: black; color: white;}
+			
+			#wrapper {
+				text-align: center;
+				padding: 50px;
+			}
+			
+			h1#header {text-transform: uppercase;}
+			
+			.disabled {color: #AAAAAA;}
+			.disabled i {color: #AAAAAA !important;}
+			
+			.switch {
+				position: relative;
+				display: inline-block;
+				vertical-align: middle;
+				margin: 0px 10px;
+				width: 60px;
+				height: 34px;
+			}
+			.switch input {display:none;}
+			.slider {
+				position: absolute;
+				cursor: pointer;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background-color: #000000;
+				border-radius: 34px;
+				-webkit-transition: .4s;
+				transition: .4s;
+			}
+			.slider:before {
+				position: absolute;
+				content: "";
+				height: 26px;
+				width: 26px;
+				left: 4px;
+				bottom: 4px;
+				background-color: white;
+				border-radius: 50%;
+				-webkit-transition: .4s;
+				transition: .4s;
+			}
+			input:checked + .slider {background-color: red;}
+			input:focus + .slider {box-shadow: 0 0 1px red;}
+			input:checked + .slider:before {
+				-webkit-transform: translateX(26px);
+				-ms-transform: translateX(26px);
+				transform: translateX(26px);
+			}
+
+			#userForm {z-index: 9;}
+
+			.userAuthForm {
+				margin: 30px auto;
+				margin-left: -56px;
+				position: absolute;
+				width: 100%;
+			}
+			.userAuthForm input {
+				margin: 5px;
+				text-align: center;
+				height: 30px;
+				border: solid 1px black;
+				border-radius: 3px;
+			}
+			.userAuthForm input.small {
+				height: 25px;
+				width: 150px;
+			}
+			.userAuthForm input:focus {
+				outline: none !important;
+				border: 1px solid red;
+			}
+			
+			.formButton {
+				background-color: red;
+				color: white;
+				cursor: pointer;
+				padding: 10px 18px;
+				margin-top: 8px;
+				text-transform: uppercase;
+				font-family: 'Montserrat', sans-serif;
+				border: none;
+				border-radius: 8px;
+			}
+			
+			#mapWrapper {pointer-events: none;}
+			
+			#mapContainer {
+				height: 400px;
+				width: 400px;
+				display: inline-block;
+				padding: 50px;
+				margin-right: 30px;
+				vertical-align: middle;
+			}
+		
+			#map {
+				height: 100%;
+				width: 100%;
+			}
+			
+			.mapBorder {
+				background-color: red;
+				position: absolute;
+				width: 20px;
+				height: 60px;
+			}
+			
+			#topLeft1.mapBorder, #topLeft2.mapBorder, #topRight1.mapBorder, #topRight2.mapBorder {margin-top: -50px;}
+			
+			#topLeft1.mapBorder, #topLeft2.mapBorder, #bottomLeft1.mapBorder, #bottomLeft2.mapBorder {margin-left: -50px;}
+			
+			#topRight1.mapBorder, #bottomRight1.mapBorder {margin-left: 425px;}
+			
+			#topRight2.mapBorder, #bottomRight2.mapBorder {margin-left: 390px;}
+			
+			#bottomLeft1.mapBorder, #bottomRight1.mapBorder {margin-top: -10px;}
+			
+			#bottomLeft2.mapBorder, #bottomRight2.mapBorder {margin-top: 25px;}
+			
+			#topLeft1.mapBorder, #topRight1.mapBorder, #bottomLeft1.mapBorder, #bottomRight1.mapBorder {
+				width: 25px;
+				height: 60px;
+			}
+			
+			#topLeft2.mapBorder, #topRight2.mapBorder, #bottomLeft2.mapBorder, #bottomRight2.mapBorder {
+				width: 60px;
+				height: 25px;
+			}
+			
+			#mapInfoContainer {
+				display: inline-block;
+				text-align: left;
+				width: 250px;
+			}
+			
+			#welcomeMessage {font-size: 25pt;}
+			
+			#welcomeMessage .name {color: red;}
+			
+			.mapButton {
+				margin: 5px;
+				color: red;
+				text-transform: uppercase;
+				font-size: 9pt;
+				cursor: pointer;
+			}
+			
+			.mapButton .fa-stack {margin-right: 3px;}
+			
+		</style>
+	</head>
+	<body>
+		<div id="wrapper">
+			
+			<!-- Container for sign up/log in forms -->
+			<div id="userForm">
+				<h1 id="header"><span id="signUpText">Sign up</span>
+				<label class="switch">
+				  <input type="checkbox" id="userFormSwitch">
+				  <div class="slider"></div>
+				</label>
+				<span id="logInText" class="disabled">Log in<span></h1>
+			
+				<form class="userAuthForm" id="signUpForm">
+					<input type="text" id="signUpEmail" placeholder="Email" />
+					<input type="password" id="signUpPassword" placeholder="Password" />
+					<br/>
+					<input type="text" id="signUpFirstName" class="small" placeholder="First name" />
+					<input type="text" id="signUpLastName" class="small" placeholder="Last name" />
+					<br/>
+					<button type="button" class="formButton" id="signUpButton">Register</button>
+				</form>
+				
+				<form class="userAuthForm" id="logInForm" style="display: none;">
+					<input type="text" id="logInEmail" placeholder="Email" />
+					<input type="password" id="logInPassword" placeholder="Password" />
+					<br/>
+					<button type="button" class="formButton" id="logInButton">Sign In</button>
+				</form>
+			</div>
+			
+			<!-- Map -->
+			<div id="mapWrapper" style="opacity: 0;">
+				<div id="mapContainer">
+					<div class="mapBorder" id="topLeft1"></div><div class="mapBorder" id="topLeft2"></div>
+					<div class="mapBorder" id="topRight1"></div><div class="mapBorder" id="topRight2"></div>
+					<div id="map"></div>
+					<div class="mapBorder" id="bottomLeft1"></div><div class="mapBorder" id="bottomLeft2"></div>
+					<div class="mapBorder" id="bottomRight1"></div><div class="mapBorder" id="bottomRight2"></div>
+				</div>
+				<div id="mapInfoContainer">
+					<div id="welcomeMessage"></div>
+					<p>This map shows you your current location along with some highlighted regions.</p>
+					<div class="mapButton" id="toggleRegionsButton"><span class="fa-stack fa-lg"><i class="fa fa-circle-o fa-stack-2x"></i><i class="fa fa fa-eye fa-stack-1x" aria-hidden="true"></i></span>toggle regions</div>
+					<div class="mapButton" id="signOutButton"><span class="fa-stack fa-lg"><i class="fa fa-circle-o fa-stack-2x"></i><i class="fa fa-power-off fa-stack-1x" aria-hidden="true"></i></span>sign out</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		
+		<script src="https://www.gstatic.com/firebasejs/3.6.10/firebase.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/3.6.10/firebase-auth.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/3.6.10/firebase-database.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+		<script>
+		
+			var userLatitude;
+			var userLongitude;
+		
+			$(document).ready(function() {
+			
+				// Sign up/log in toggle switch
+				$("#userFormSwitch").unbind('click').click(function(){
+					$("#signUpForm").toggle("drop", {direction: "left", distance : 400}, 800);
+					$("#logInForm").toggle("drop", {direction: "right", distance : 400}, 800);
+					$("#signUpText").toggleClass("disabled", 300, "easeOutSine");
+					$("#logInText").toggleClass("disabled", 300, "easeOutSine");
+				});
+			
+				// Initialize Firebase
+				var firebaseConfig = {
+					apiKey: "AIzaSyDLn_NOCXSeQNkFP60yjd6T0l2puITtt-U",
+					authDomain: "application-task-4e8fe.firebaseapp.com",
+					databaseURL: "https://application-task-4e8fe.firebaseio.com"
+				};
+				firebase.initializeApp(firebaseConfig);
+			
+				//User authentication
+				var email;
+				var password;
+				var firstName;
+				var lastName;
+				
+				//Sign up user form is submitted
+				$("#signUpButton").click(function() {
+					email = $("#signUpEmail").val();
+					password = $("#signUpPassword").val();
+					firstName = $("#signUpFirstName").val();
+					lastName = $("#signUpLastName").val();
+					if (email == ""
+						|| password == ""
+						|| firstName == ""
+						|| lastName == "")
+						alert("Please complete form.");
+					else {
+						//Sign up user
+						firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+							var errorCode = error.code;
+							var errorMessage = error.message;
+							if (errorCode == 'auth/weak-password') {
+							  alert('The password is too weak.');
+							} else {
+							  alert(errorMessage);
+							}
+							console.log(error);
+						});
+					}
+				});
+				
+				//Log in user form is submitted
+				$("#logInButton").click(function() {
+					email = $("#logInEmail").val();
+					password = $("#logInPassword").val();
+					if (email == "" || password == "")
+						alert("Please complete form.");
+					else {
+						//Log in user
+						firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+						  var errorCode = error.code;
+						  var errorMessage = error.message;
+						  if (errorCode === 'auth/wrong-password') {
+							alert('Wrong password.');
+						  } else {
+							alert(errorMessage);
+						  }
+						  console.log(error);
+						});
+					}
+				});
+				
+				firebase.auth().onAuthStateChanged(function(user) {
+					if (user) {
+						// User is signed in.
+						var displayName = user.displayName;
+						var email = user.email;
+						var emailVerified = user.emailVerified;
+						var photoURL = user.photoURL;
+						var isAnonymous = user.isAnonymous;
+						var uid = user.uid;
+						var providerData = user.providerData;
+						
+						//Add name to database
+						firstName = $("#signUpFirstName").val();
+						lastName = $("#signUpLastName").val();
+						if (firstName != "" && lastName != "") {
+							firebase.database().ref(user.uid).set({
+								firstName: firstName,
+								lastName: lastName
+							});
+						}
+					
+						$('<p><i>User authentication success</i></p>').hide().appendTo($("#userForm")).show("fade", 300);
+						
+						//Get user's first name and display						
+						$.getJSON("https://application-task-4e8fe.firebaseio.com/" + firebase.auth().currentUser.uid + ".json", function(data) {
+							$("#welcomeMessage").html("Hi <span class='name'>" + data['firstName'] + ".</span>");
+						});
+						
+						//Hide user authentication forms, show map
+						$("#userForm").hide("fade", 800, function() {
+							$("#mapWrapper").css('pointer-events', 'auto');
+							$("#mapWrapper").animate({opacity : 1}, 800);
+						});
+					}
+				});
+					
+				// Sign out button clicked
+				$("#signOutButton").click(function() {
+					firebase.auth().signOut().then(function() {
+					  console.log('Signed Out');
+					}, function(error) {
+					  console.error('Sign Out Error', error);
+					});
+					location.reload();
+				});
+		
+				// Get location data
+				$.getJSON("http://ip-api.com/json", function(location) {
+					userLatitude = parseFloat(location.lat);
+					userLongitude = parseFloat(location.lon);
+					
+					// Initialize map
+					var map = new google.maps.Map(document.getElementById('map'), {
+						center: {lat: userLatitude, lng: userLongitude},
+						zoom: 10,
+						styles: [
+							{
+								"featureType": "administrative",
+								"elementType": "labels.text.fill",
+								"stylers": [
+									{
+										"color": "#444444"
+									}
+								]
+							},
+							{
+								"featureType": "landscape",
+								"elementType": "all",
+								"stylers": [
+									{
+										"color": "#fcfcfc"
+									}
+								]
+							},
+							{
+								"featureType": "poi",
+								"elementType": "all",
+								"stylers": [
+									{
+										"visibility": "off"
+									}
+								]
+							},
+							{
+								"featureType": "road",
+								"elementType": "all",
+								"stylers": [
+									{
+										"saturation": -100
+									},
+									{
+										"lightness": 45
+									},
+									{
+										"visibility": "on"
+									},
+									{
+										"color": "#cfcfcf"
+									}
+								]
+							},
+							{
+								"featureType": "road.highway",
+								"elementType": "all",
+								"stylers": [
+									{
+										"visibility": "simplified"
+									}
+								]
+							},
+							{
+								"featureType": "road.arterial",
+								"elementType": "labels.icon",
+								"stylers": [
+									{
+										"visibility": "off"
+									}
+								]
+							},
+							{
+								"featureType": "transit",
+								"elementType": "all",
+								"stylers": [
+									{
+										"visibility": "off"
+									}
+								]
+							},
+							{
+								"featureType": "water",
+								"elementType": "all",
+								"stylers": [
+									{
+										"color": "#2f2f2f"
+									},
+									{
+										"visibility": "on"
+									}
+								]
+							}
+						]
+					});	
+			
+					// Get and plot regions to map
+					$.getJSON("https://application-task-4e8fe.firebaseio.com/regions.json", function(data) {
+						var polygons = [];
+						var polygonsSet = false;
+						for (var i = 0; i < data.length; i++) {
+							polygons[i] = new google.maps.Polygon({
+								paths: data[i],
+								strokeColor: '#FF0000',
+								strokeOpacity: 0.8,
+								strokeWeight: 2,
+								fillColor: '#FF0000',
+								fillOpacity: 0.35
+							});
+							polygons[i].setMap(map);
+						}
+						polygonsSet = true;
+							
+						$("#toggleRegionsButton").click(function() {
+							for (var i = 0; i < data.length; i++)	{
+								if (polygonsSet)
+									polygons[i].setMap(null);
+								else
+									polygons[i].setMap(map);
+							}
+							if (polygonsSet)
+								polygonsSet = false;
+							else
+								polygonsSet = true;
+							$("#toggleRegionsButton").toggleClass("disabled", 300, "easeOutSine");
+						});
+					});	
+				});
+			});
+		</script>
+		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-o7z9cYe3SDmXTuhqAa7Wv2rkfyZXIyY"></script>
+	</body>
+</html>
